@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  backend:
+    network_mode: host
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: python app.py
+    volumes:
+      - ./backend :/usr/src/backend
+    ports:
+      - 8000:5000
+    env_file:
+      - ./.env.dev

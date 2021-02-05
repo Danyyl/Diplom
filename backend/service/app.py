@@ -8,6 +8,7 @@ from io import StringIO
 import io
 from PIL import Image
 from flask_cors import CORS
+import numpy
 
 
 app = Flask(__name__)
@@ -21,17 +22,20 @@ def index():
 
 @socketio.on('image')
 def image(data_image):
-    print("Hello")
     sbuf = StringIO()
     sbuf.write(data_image)
 
     # decode and convert into image
     b = io.BytesIO(base64.b64decode(data_image))
     pimg = Image.open(b)
-
+    pimg = numpy.array(pimg) 
+    # Convert RGB to BGR 
+    #pimg = cv2.cvtColor(pimg, cv2.COLOR_RGB2BGR)
     # Process the image frame
     frame = imutils.resize(pimg, width=700)
-    frame = cv2.flip(frame, 1)
+    cv2.putText(frame, "Obrabotano na beke", (50,100), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 0, 0), lineType=cv2.LINE_AA)
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     imgencode = cv2.imencode('.jpg', frame)[1]
 
     # base64 encode
@@ -44,4 +48,4 @@ def image(data_image):
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', debug=True)
+    socketio.run(app, host='127.0.0.1', debug=True)

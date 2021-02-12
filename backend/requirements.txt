@@ -22,3 +22,5 @@ virtualenv
 virtualenv-clone
 Werkzeug
 opencv-python
+cmake
+dlib

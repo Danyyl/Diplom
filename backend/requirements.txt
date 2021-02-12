@@ -24,3 +24,4 @@ Werkzeug
 opencv-python
 cmake
 dlib
+scipy

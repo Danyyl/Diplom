@@ -5,10 +5,10 @@
 	</HEAD>
     <BODY>
         <div id="container">
-            <canvas id="canvasOutput" style="width: 400; height: 275"></canvas>
+            <canvas id="canvasOutput" style="width: 400; height: 275; display: none"></canvas>
             <video autoplay="true" id="videoElement" style = "display: none"></video>
         </div>
-
+		<h3 id="text"></h3>
         <div class = 'video'>
             <img id="image">
         </div>
@@ -20,7 +20,7 @@
             socket.on('connect', function(){
                 console.log("Connected...!", socket.connected)
             });
-
+			const text = document.querySelector("#text");
             const video = document.querySelector("#videoElement");
             video.width = 400;
             video.height = 275;
@@ -55,9 +55,10 @@
 				}, 10000/FPS);
 
 
-				socket.on('response_back', function(image){
+				socket.on('response_back', function(image, input_text){
 					const image_id = document.getElementById('image');
 					image_id.src = image;
+					text.innerHTML = input_text
 				});
 			
 			function onOpenCvReady() {

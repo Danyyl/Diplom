@@ -50,6 +50,7 @@ def image(data_image):
     #pimg = cv2.cvtColor(pimg, cv2.COLOR_RGB2BGR)
     # Process the image frame
     frame = imutils.resize(pimg, width=700)
+    res_str = ""
     if not frame is None:
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         dets_webcam = detector(image, 1)
@@ -63,7 +64,8 @@ def image(data_image):
                 a = distance.euclidean(desr['descriptor'], face_descriptor2)
                 if a < 0.6:
                     color = (255,0,0)
-                    text = desr['name']               
+                    text = desr['name']          
+            res_str += text + str(color) + "\n"
             cv2.rectangle(frame, (d.left(), d.top()), (d.right(), d.bottom()), color, 2)
             cv2.putText(frame, text, (d.left()-50, d.top()-50), 
                             cv2.FONT_HERSHEY_SIMPLEX, 1.0, color, lineType=cv2.LINE_AA)
@@ -75,7 +77,7 @@ def image(data_image):
     stringData = b64_src + stringData
 
     # emit the frame back
-    emit('response_back', stringData)
+    emit('response_back', (stringData, res_str))
 
 
 if __name__ == '__main__':

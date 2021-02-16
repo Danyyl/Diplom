@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 RUN mkdir /code
 
-COPY . /code/
+COPY .. /code/
 
 RUN apt-get update ##[edited]
 RUN apt-get install ffmpeg libsm6 libxext6  -y

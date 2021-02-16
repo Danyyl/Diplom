@@ -1,10 +1,10 @@
 version: '3.7'
 services:
-  backend:
+  service:
     network_mode: host
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: service/Dockerfile
     command: python app.py
     volumes:
       - ./backend :/usr/src/backend

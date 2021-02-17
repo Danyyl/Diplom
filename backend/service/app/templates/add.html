@@ -1,0 +1,73 @@
+<HTML>
+    <HEAD>
+        <TITLE>Your Title Here</TITLE>
+	</HEAD>
+    <BODY>
+        <div id="container">
+            <canvas id="canvasOutput" style="width: 400; height: 275"></canvas>
+            <video autoplay="true" id="videoElement" style = "display: none"></video>
+        </div>
+        <input type="text" id = 'name'>
+		<button id="butt" style="display: none" onclick="Add_function()"></button>
+    </BODY>
+	<script async src="https://docs.opencv.org/master/opencv.js" type="text/javascript" onload="onOpenCvReady()"></script>
+	<script>
+			const text = document.querySelector("#text");
+            const video = document.querySelector("#videoElement");
+            video.width = 400;
+            video.height = 275;
+
+            if (navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function (err0r) {
+                    console.log(err0r)
+                    console.log("Something went wrong!");
+                });
+            }
+
+				canvas = document.getElementById("canvasOutput");
+				context = canvas.getContext("2d");
+
+
+				async function Add_function() {
+                    let src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
+                    let dst = new cv.Mat(video.height, video.width, cv.CV_8UC1);
+                    let cap = new cv.VideoCapture(video);
+                    cap.read(src);
+                    context.drawImage(video, 0, 0, 400, 275);
+                    var type = "image/png"
+                    var data = document.getElementById("canvasOutput").toDataURL(type);
+                    data = data.replace('data:' + type + ';base64,', ''); //split off junkat the beginning
+                    const url = 'http://127.0.0.1:5000/add';
+                    data = {image_data: data, name: document.getElementById("name").value};
+
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST', // или 'PUT'
+                            body: JSON.stringify(data), // данные могут быть 'строкой' или {объектом}!
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        const json = await response.json();
+                        console.log('Успех:', JSON.stringify(json));
+                    } catch (error) {
+                        console.error('Ошибка:', error);
+                    }
+                }
+
+
+			function onOpenCvReady() {
+			    document.getElementById("butt").style.display = 'block';
+				console.log('OpenCV.js is ready.');
+}
+        </script>
+</HTML>
+
+
+
+

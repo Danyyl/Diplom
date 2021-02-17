@@ -22,7 +22,6 @@ def add():
         print(User.query.all())
         return render_template('add.html')
     if request.method == "POST":
-        print(request.json['image_data'], request.json['name'])
         data_image = request.json['image_data']
         name = request.json['name']
         b = io.BytesIO(base64.b64decode(data_image))
@@ -31,7 +30,7 @@ def add():
         frame = imutils.resize(pimg, width=700)
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         result = create(frame, name)
-        return result
+        return {'result': result}
 
 
 @app.route('/', methods=['POST', 'GET'])

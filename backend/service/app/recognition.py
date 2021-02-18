@@ -2,17 +2,19 @@ import dlib
 import cv2
 from scipy.spatial import distance
 
-arr = []
-with open("descriptors.txt") as file_handler:
-    for line in file_handler:
-        temp = {
-            "name": line.split(' ')[1],
-            "descriptor": [float(temp) for temp in line.split(' ')[0].split(';')]
-        }
-        arr.append(temp)
+from backend.service.app.models import User
 
-sp = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
-facerec = dlib.face_recognition_model_v1('dlib_face_recognition_resnet_model_v1.dat')
+arr = []
+
+for user in User.query.all():
+    temp = {
+        "name": user.full_name,
+        "descriptor": [float(temp) for temp in user.descriptor.split(';')]
+    }
+    arr.append(temp)
+
+sp = dlib.shape_predictor('./app/shape_predictor_68_face_landmarks.dat')
+facerec = dlib.face_recognition_model_v1('./app/dlib_face_recognition_resnet_model_v1.dat')
 detector = dlib.get_frontal_face_detector()
 
 

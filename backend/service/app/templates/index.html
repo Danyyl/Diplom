@@ -9,6 +9,10 @@
             <video autoplay="true" id="videoElement" style = "display: none"></video>
         </div>
 		<h3 id="text"></h3>
+        <select id="method">
+            <option value="0">DLIB</option>
+            <option value="1">Haascar</option>
+            <option value="2">MTCNN</option>
         <div class = 'video'>
             <img id="image">
         </div>
@@ -46,12 +50,13 @@
 					let src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
 					let dst = new cv.Mat(video.height, video.width, cv.CV_8UC1);
 					let cap = new cv.VideoCapture(video);
+					var method = document.getElementById('maethod').value
 					cap.read(src);
 					context.drawImage(video, 0, 0, 400, 275);
 					var type = "image/png"
 					var data = document.getElementById("canvasOutput").toDataURL(type);
 					data = data.replace('data:' + type + ';base64,', ''); //split off junkat the beginning
-					socket.emit('image', data);
+					socket.emit('image', {'image': data, 'method': method});
 				}, 10000/FPS);
 
 

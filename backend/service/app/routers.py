@@ -8,7 +8,7 @@ from PIL import Image
 import numpy
 import cv2
 
-from backend.service.app.recognition import recognition
+from backend.service.app.recognition import recognition_dlib, recognition_haar
 from backend.service.app.add_description import create
 
 from backend.service.app import app
@@ -42,17 +42,22 @@ def index():
 @socketio.on('image')
 def image(data_image):
     sbuf = StringIO()
-    sbuf.write(data_image)
+    sbuf.write(data_image['image'])
 
     # decode and convert into image
-    b = io.BytesIO(base64.b64decode(data_image))
+    b = io.BytesIO(base64.b64decode(data_image['image']))
     pimg = Image.open(b)
     pimg = numpy.array(pimg)
     # Convert RGB to BGR
     # Process the image frame
     frame = imutils.resize(pimg, width=700)
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    frame, res_str = recognition(frame)
+    if data_image['method'] == 0:
+        frame, res_str = recognition_dlib(frame)
+    if data_image['method'] == 1:
+        frame, res_str = recognition_haar(frame)
+    if data_image['method'] == 2:
+        frame, res_str = recognition_dlib(frame)
 
     imgencode = cv2.imencode('.jpg', frame)[1]
 

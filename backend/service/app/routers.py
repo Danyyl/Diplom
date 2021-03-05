@@ -23,6 +23,7 @@ def delete():
     for user in users:
         user.delete()
     print(User.query.all())
+    return render_template('default.html')
 
 
 @app.route('/add', methods=['GET', 'POST'])

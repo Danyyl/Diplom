@@ -44,7 +44,7 @@ def index():
 def image(data_image):
     sbuf = StringIO()
     sbuf.write(data_image['image'])
-
+    res_str = ""
     # decode and convert into image
     b = io.BytesIO(base64.b64decode(data_image['image']))
     pimg = Image.open(b)

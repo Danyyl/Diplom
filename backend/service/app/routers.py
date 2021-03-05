@@ -17,6 +17,14 @@ from backend.service.app import socketio
 from backend.service.app.models import User
 
 
+@app.route('/delete', methods=['GET'])
+def delete():
+    users = User.query.all()
+    for user in users:
+        user.delete()
+    print(User.query.all())
+
+
 @app.route('/add', methods=['GET', 'POST'])
 def add():
     if request.method == "GET":

@@ -9,14 +9,17 @@ from mtcnn import MTCNN
 
 from backend.service.app.models import User
 
-arr = []
 
-for user in User.query.all():
-    temp = {
-        "name": user.full_name,
-        "descriptor": [float(temp) for temp in user.descriptor.split(';')]
-    }
-    arr.append(temp)
+def get_users():
+    arr = []
+
+    for user in User.query.all():
+        temp = {
+            "name": user.full_name,
+            "descriptor": [float(temp) for temp in user.descriptor.split(';')]
+        }
+        arr.append(temp)
+    return arr
 
 sp = dlib.shape_predictor('./app/shape_predictor_68_face_landmarks.dat')
 facerec = dlib.face_recognition_model_v1('./app/dlib_face_recognition_resnet_model_v1.dat')
@@ -27,6 +30,7 @@ detector_mtcnn = MTCNN()
 
 def recognition_dlib(frame):
     res_str = ""
+    arr = get_users()
     if not frame is None:
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         dets_webcam = detector(image, 1)
@@ -49,6 +53,7 @@ def recognition_dlib(frame):
 
 def recognition_haar(frame):
     res_str = ""
+    arr = get_users()
     if not frame is None:
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         faces = faceCascade.detectMultiScale(
@@ -76,6 +81,7 @@ def recognition_haar(frame):
 
 def recognition_face_recognition(frame):
     res_str = ""
+    arr = get_users()
     if not frame is None:
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         face_loc = fr.face_locations(image)
@@ -97,6 +103,7 @@ def recognition_face_recognition(frame):
 
 def recognition_mtcnn(frame):
     res_str = ""
+    arr = get_users()
     if not frame is None:
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         dets_webcam = detector_mtcnn.detect_faces(image)

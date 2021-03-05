@@ -27,3 +27,6 @@ dlib
 scipy
 flask-sqlalchemy
 flask-migrate
+face_recognition
+mtcnn
+tensorflow

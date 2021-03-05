@@ -8,7 +8,8 @@ from PIL import Image
 import numpy
 import cv2
 
-from backend.service.app.recognition import recognition_dlib, recognition_haar
+from backend.service.app.recognition import recognition_dlib, recognition_haar, recognition_face_recognition, \
+    recognition_mtcnn
 from backend.service.app.add_description import create
 
 from backend.service.app import app
@@ -57,7 +58,9 @@ def image(data_image):
     if data_image['method'] == 1:
         frame, res_str = recognition_haar(frame)
     if data_image['method'] == 2:
-        frame, res_str = recognition_dlib(frame)
+        frame, res_str = recognition_face_recognition(frame)
+    if data_image['method'] == 3:
+        frame, res_str = recognition_mtcnn(frame)
 
     imgencode = cv2.imencode('.jpg', frame)[1]
 

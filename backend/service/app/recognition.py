@@ -2,6 +2,9 @@ import dlib
 import cv2
 import datetime
 from scipy.spatial import distance
+import PIL.Image
+import PIL.ImageDraw
+import face_recognition as fr
 
 from backend.service.app.models import User
 
@@ -63,6 +66,49 @@ def recognition_haar(frame):
                     color = (255, 0, 0)
                     text = desr['name']
             res_str += text + str(color) + "\n"
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            cv2.putText(frame, text, (x - 50, y - 50),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1.0, color, lineType=cv2.LINE_AA)
+    return frame, res_str
+
+
+def recognition_face_recognition(frame):
+    res_str = ""
+    if not frame is None:
+        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        face_loc = fr.face_locations(image)
+        for (top, right, bottom, left) in face_loc:
+            shape = sp(image, dlib.rectangle(left, top, right, bottom))
+            color = (0, 0, 255)
+            text = 'unknown'
+            face_descriptor2 = facerec.compute_face_descriptor(image, shape)
+            for desr in arr:
+               a = distance.euclidean(desr['descriptor'], face_descriptor2)
+               if a < 0.6:
+                   color = (255, 0, 0)
+                   text = desr['name']
+            cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
+            cv2.putText(frame, text, (left-50, top-50),
+                            cv2.FONT_HERSHEY_SIMPLEX, 1.0, color, lineType=cv2.LINE_AA)
+    return frame, res_str
+
+
+def recognition_mtcnn(frame):
+    res_str = ""
+    if not frame is None:
+        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        dets_webcam = detector.detect_faces(image)
+        for d in dets_webcam:
+            x, y, w, h = d['box']
+            shape = sp(image, dlib.rectangle(x, y, x + w, y + h))
+            color = (0, 0, 255)
+            text = 'unknown'
+            face_descriptor2 = facerec.compute_face_descriptor(image, shape)
+            for desr in arr:
+                a = distance.euclidean(desr['descriptor'], face_descriptor2)
+                if a < 0.6:
+                    color = (255, 0, 0)
+                    text = desr['name']
             cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             cv2.putText(frame, text, (x - 50, y - 50),
                         cv2.FONT_HERSHEY_SIMPLEX, 1.0, color, lineType=cv2.LINE_AA)

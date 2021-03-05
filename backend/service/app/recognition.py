@@ -5,6 +5,7 @@ from scipy.spatial import distance
 import PIL.Image
 import PIL.ImageDraw
 import face_recognition as fr
+from mtcnn import MTCNN
 
 from backend.service.app.models import User
 
@@ -20,7 +21,8 @@ for user in User.query.all():
 sp = dlib.shape_predictor('./app/shape_predictor_68_face_landmarks.dat')
 facerec = dlib.face_recognition_model_v1('./app/dlib_face_recognition_resnet_model_v1.dat')
 detector = dlib.get_frontal_face_detector()
-faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+faceCascade = cv2.CascadeClassifier('./app/haarcascade_frontalface_default.xml')
+detector_mtcnn = MTCNN()
 
 
 def recognition_dlib(frame):
@@ -97,7 +99,7 @@ def recognition_mtcnn(frame):
     res_str = ""
     if not frame is None:
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        dets_webcam = detector.detect_faces(image)
+        dets_webcam = detector_mtcnn.detect_faces(image)
         for d in dets_webcam:
             x, y, w, h = d['box']
             shape = sp(image, dlib.rectangle(x, y, x + w, y + h))

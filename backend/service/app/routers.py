@@ -53,13 +53,13 @@ def image(data_image):
     # Process the image frame
     frame = imutils.resize(pimg, width=700)
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    if data_image['method'] == 0:
+    if data_image['method'] == '0':
         frame, res_str = recognition_dlib(frame)
-    if data_image['method'] == 1:
+    if data_image['method'] == '1':
         frame, res_str = recognition_haar(frame)
-    if data_image['method'] == 2:
+    if data_image['method'] == '2':
         frame, res_str = recognition_face_recognition(frame)
-    if data_image['method'] == 3:
+    if data_image['method'] == '3':
         frame, res_str = recognition_mtcnn(frame)
 
     imgencode = cv2.imencode('.jpg', frame)[1]

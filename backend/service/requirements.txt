@@ -1,3 +1,4 @@
+cmake
 asgiref
 bidict
 certifi
@@ -22,7 +23,6 @@ virtualenv
 virtualenv-clone
 Werkzeug
 opencv-python
-cmake
 dlib
 scipy
 flask-sqlalchemy

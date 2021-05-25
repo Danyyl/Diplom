@@ -7,7 +7,7 @@ import PIL.ImageDraw
 import face_recognition as fr
 from mtcnn import MTCNN
 
-from backend.service.app.models import User
+from app_code.app.models import User
 
 
 def get_users():

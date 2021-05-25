@@ -9,7 +9,7 @@
 # import numpy
 # import cv2
 #
-# from backend.service.app.recognition import recognition
+# from app.recognition import recognition_dlib
 #
 #
 # app = Flask(__name__)
@@ -36,7 +36,7 @@
 #     #pimg = cv2.cvtColor(pimg, cv2.COLOR_RGB2BGR)
 #     # Process the image frame
 #     frame = imutils.resize(pimg, width=700)
-#     frame, res_str = recognition(frame)
+#     frame, res_str = recognition_dlib(frame)
 #
 #     imgencode = cv2.imencode('.jpg', frame)[1]
 #

@@ -3,21 +3,24 @@ import imutils
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 from io import StringIO
+from flask_cors import CORS, cross_origin
 import io
 from PIL import Image
 import numpy
 import cv2
 
-from backend.service.app.recognition import recognition_dlib, recognition_haar, recognition_face_recognition, \
+from app_code.app.recognition import recognition_dlib, recognition_haar, recognition_face_recognition, \
     recognition_mtcnn
-from backend.service.app.add_description import create
+from app_code.app.add_description import create
 
-from backend.service.app import app
-from backend.service.app import socketio
-from backend.service.app.models import User
+from app_code.app import app
+from app_code.app import socketio
+from app_code.app.models import User
+
 
 
 @app.route('/delete', methods=['GET'])
+@cross_origin()
 def delete():
     users = User.query.all()
     for user in users:
@@ -27,6 +30,7 @@ def delete():
 
 
 @app.route('/add', methods=['GET', 'POST'])
+@cross_origin()
 def add():
     if request.method == "GET":
         print(User.query.all())
@@ -44,12 +48,14 @@ def add():
 
 
 @app.route('/', methods=['POST', 'GET'])
+@cross_origin()
 def index():
     print("index")
     return render_template('index.html')
 
 
 @socketio.on('image')
+@cross_origin()
 def image(data_image):
     sbuf = StringIO()
     sbuf.write(data_image['image'])
@@ -79,4 +85,5 @@ def image(data_image):
     stringData = b64_src + stringData
 
     # emit the frame back
+    print(stringData, res_str)
     emit('response_back', (stringData, res_str))

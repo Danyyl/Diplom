@@ -3,12 +3,26 @@ services:
   service:
     network_mode: host
     build:
-      context: ./backend
-      dockerfile: service/Dockerfile
-    command: python app.py
-    volumes:
-      - ./backend :/usr/src/backend
+      context: ./backend/service
+      dockerfile: Dockerfile
+    command: flask run
     ports:
-      - 8000:5000
+      - 5000:5000
+    volumes:
+      - ./backend/service:/app_code
+    env_file:
+      - ./.env.dev
+  django:
+    restart: always
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    command: >
+      sh -c "python backend/manage.py runserver 0.0.0.0:8080"
+    volumes:
+    - ./backend:/app
+    environment:
+      - DEBUG=1
     env_file:
       - ./.env.dev

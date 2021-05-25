@@ -1,0 +1,17 @@
+django
+django-cors-headers
+django-filter
+django-filters-clone
+django-guardian
+django-rest-auth
+django-allauth
+django-rest-framework
+djangorestframework
+djangorestframework-api-key
+django-anymail
+drf-jwt
+django-filter
+django-guardian
+django-jsonfield
+drf-nested-routers
+django-rest-swagger

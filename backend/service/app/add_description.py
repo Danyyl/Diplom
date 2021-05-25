@@ -1,6 +1,6 @@
 import dlib
-from backend.service.app.models import User
-from backend.service.app import db
+from app_code.app.models import User
+from app_code.app import db
 
 
 def create(image, name):

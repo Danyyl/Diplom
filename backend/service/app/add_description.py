@@ -15,5 +15,6 @@ def create(image, name):
         user = User(full_name=name, descriptor=result)
         db.session.add(user)
         db.session.commit()
-        return True
+        user = User.query.get(full_name=name)
+        return user.id
     return False

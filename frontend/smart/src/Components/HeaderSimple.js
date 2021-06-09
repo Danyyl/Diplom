@@ -7,7 +7,6 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import {Link} from "react-router-dom";
-import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,28 +35,26 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-
-
-export default function Header() {
+export default function HeaderSimple() {
   const classes = useStyles();
-  const history = useHistory()
+
   return (
     <div className={classes.root}>
       <AppBar >
         <Toolbar>
-          <Link className={classes.link} to="/">
+          <Link className={classes.link} to="/profile_simple">
           <Typography variant="h6" className={classes.title}>
             Profile
           </Typography>
             </Link>
-          <Link className={classes.link} to="/companies">
+          <Link className={classes.link} to="/services_simple">
           <Typography variant="h6" className={classes.title}>
-            Companies
+            Services
           </Typography>
             </Link>
-          <Link className={classes.link} to="/recognition">
+          <Link className={classes.link} to="/activity">
           <Typography variant="h6" className={classes.title}>
-            Recognition
+            Activity
           </Typography>
             </Link>
           <Button color="inherit" className={classes.login} onClick={()=>{window.location.reload()}}>Log Out</Button>

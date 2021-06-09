@@ -3,14 +3,14 @@ import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useDispatch, useSelector } from 'react-redux';
-import { get_company } from '../redux/reducers/auth/authActions'
-import Typography from "@material-ui/core/Typography";
+import { get_service } from '../redux/reducers/auth/authActions'
 import Header from "./Header";
 import { useHistory } from 'react-router-dom';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
 import axios from "axios";
 
 
@@ -19,14 +19,12 @@ const useStyles = makeStyles({
     minWidth: 575,
     backgroundColor: "#C0CEFC",
     display: "grid",
-    gridTemplateColumns: "65% 35%",
+    gridTemplateColumns: "50% 50%",
     columnGap: "20px",
     boxShadow: "0 0 10px",
   },
-  bullet: {
-    display: 'inline-block',
-    margin: '0 2px',
-    transform: 'scale(0.8)',
+  title: {
+    fontSize: 14,
   },
   name: {
     color: "#2C4081",
@@ -40,31 +38,18 @@ const useStyles = makeStyles({
     fontSize: "28px",
     fontFamily: "Red Hat Text"
   },
-  address: {
+  type: {
     color: "#2C4081",
     fontWeight: "bold",
     fontSize: "20px",
     fontFamily: "Red Hat Text"
-  },
-  contact: {
-    color: "#2C4081",
-    fontWeight: "bold",
-    fontSize: "24px",
-    fontFamily: "Red Hat Text"
-  },
-  rate: {
-    color: "#2C4081",
-    fontWeight: "bold",
-    fontSize: "20px",
-    fontFamily: "Red Hat Text",
   },
   pos: {
     marginBottom: 12,
   },
-  rating: {
-    display: "grid",
-    gridTemplateColumns: "30% 70%",
-    marginTop: "50px",
+  image: {
+    height: "30px",
+    width: "30px",
   },
   button:{
     backgroundColor: "#2C4081",
@@ -75,14 +60,36 @@ const useStyles = makeStyles({
     marginRight: "50px",
     marginTop: "5%",
   },
-  image: {
-    height: "30px",
-    width: "30px",
-  }
+  rating: {
+    display: "grid",
+    gridTemplateColumns: "30% 70%",
+    marginTop: "50px",
+  },
+  rate: {
+    color: "#2C4081",
+    fontWeight: "bold",
+    fontSize: "20px",
+    fontFamily: "Red Hat Text",
+  },
+  column: {
+    display: "grid",
+    gridTemplateRows: "50% 20% 20%",
+    rowGap: "5px",
+  },
+  tags: {
+
+  },
+  tag: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    fontSize: "18px",
+    fontFamily: "Red Hat Text",
+    marginLeft: "50px",
+  },
 });
 
 
-export default function Company_list(props) {
+export default function ServiceSimpleList(props) {
   const classes = useStyles();
 
   const history = useHistory()
@@ -109,33 +116,73 @@ export default function Company_list(props) {
     });
   };
 
-  const get_detail = (id) => {
+  const get_detail = (id, path) => {
     console.log("get_detail" + id);
-     return dispatch(get_company(token, id, history));
+     return dispatch(get_service(token, id, history, path));
   }
 
   const delete_obj = (id) => {
     let requestBody = {};
     requestBody.method = 'DELETE';
-    requestBody = {
-    };
 
-    const request = axios.delete(`http://0.0.0.0:8080/api/company/` + id + "/", requestBody, {
+    const request = axios.delete(`http://0.0.0.0:8080/api/service/`+ id+ "/", {
                         headers: { Authorization: `Bearer ${token}` }
                     });
 
         request.then((response) => {
-            props.callback();
+          props.callback();
         })
         .catch(error => {
             console.log(error);
         });
   }
+  let tags_arr = "" ;
+  try {
+        tags_arr = props.tags.map((tag) => (
+            <Typography className={classes.tag}>{"#" + tag.name}</Typography>
+        ));
+    } catch (e){
+        console.log(e);
+    }
 
- const bull = <span className={classes.bullet}>•</span>;
+    let buttons = ""
+    switch (props.status){
+      case "Example":
+        buttons = (
+            <div className={classes.column}>
+        <div className={classes.tags}>
+          {tags_arr}
+        </div>
+        <Button className={classes.button} size="small" onClick={(() => {get_detail(props.id, "Simple")})}>Learn More</Button>
+      </div>
+        )
+        break;
+      case "Processed":
+        buttons = (
+            <div className={classes.column}>
+        <div className={classes.tags}>
+          {tags_arr}
+        </div>
+              <div></div>
+        <Button className={classes.button} size="small" onClick={(() => {get_detail(props.id, "Requested")})}>Process</Button>
+      </div>
+        )
+        break;
+      case "Done":
+        buttons = (
+            <div className={classes.column}>
+        <div className={classes.tags}>
+          {tags_arr}
+        </div>
+              <div></div>
+        <Button className={classes.button} size="small" onClick={(() => {get_detail(props.id, "Done")})}>More</Button>
+      </div>
+        )
+        break;
+    }
 
   return (
-    <Card className={classes.root} variant="outlined">
+   <Card className={classes.root} variant="outlined">
       <div>
         <CardContent>
           <Typography className={classes.name}>
@@ -144,25 +191,18 @@ export default function Company_list(props) {
           <Typography className={classes.description}>
             {props.description}
           </Typography>
-          <Typography className={classes.address}>
-            {props.address}
+          <Typography className={classes.type}>
+            {props.type}
           </Typography>
-          <Typography className={classes.contact}>
-            {props.contact_info}
-          </Typography>
-        </CardContent>
-      </div>
-      <div>
-        <div className={classes.rating}>
+          <div className={classes.rating}>
               <img className={classes.image} src = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Gold_Star.svg/1200px-Gold_Star.svg.png"/>
           <Typography className={classes.rate}>
             {props.rate}
           </Typography>
         </div>
-        <br/>
-        <Button className={classes.button} size="small" onClick={(() => {delete_obj(props.id)})}>Delete</Button>
-        <Button className={classes.button} size="small" onClick={(() => {get_detail(props.id)})}>Learn More</Button>
+        </CardContent>
       </div>
+     {buttons}
     </Card>
   );
 }

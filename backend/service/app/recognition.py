@@ -15,6 +15,7 @@ def get_users():
 
     for user in User.query.all():
         temp = {
+            "id": user.id,
             "name": user.full_name,
             "descriptor": [float(temp) for temp in user.descriptor.split(';')]
         }
@@ -43,8 +44,8 @@ def recognition_dlib(frame):
                 a = distance.euclidean(desr['descriptor'], face_descriptor2)
                 if a < 0.6:
                     color = (255, 0, 0)
-                    text = desr['name']
-            res_str += text + str(color) + "\n"
+                    text = str(desr['id'])
+            res_str += f"{desr['id']} "
             cv2.rectangle(frame, (d.left(), d.top()), (d.right(), d.bottom()), color, 2)
             cv2.putText(frame, text, (d.left() - 50, d.top() - 50),
                         cv2.FONT_HERSHEY_SIMPLEX, 1.0, color, lineType=cv2.LINE_AA)

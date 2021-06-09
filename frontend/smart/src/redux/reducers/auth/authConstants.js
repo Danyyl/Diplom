@@ -3,3 +3,7 @@ export const SET_TOKEN = '[TOKEN] SET TOKEN';
 export const SET_USER = '[USER] SET USER;';
 export const SET_COMPANY = '[USER] SET COMPANY;';
 export const SET_USERS = '[USER] SET USERS';
+export const SET_TEMP_USER = '[USER] SET TEMP USER';
+export const SET_SERVICE = '[Service] SET SERVICE';
+export const SET_ALL_SERVICES = '[Service] SET ALL SERVICE';
+export const SET_ALL_COMPANIES = '[Company] SET ALL COMPANIES';

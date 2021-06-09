@@ -1,4 +1,6 @@
-from app_code.app import db
+import sys
+sys.path.append("../../app")
+from . import db
 
 
 class User(db.Model):
@@ -6,5 +8,9 @@ class User(db.Model):
     full_name = db.Column(db.String(64), index=True)
     descriptor = db.Column(db.Text(), index=True, unique=True)
 
+    def delete(self, instance):
+        db.session.delete(instance)
+        db.session.commit()
+
     def __repr__(self):
-        return '<Full name {}>'.format(self.full_name)
+        return '<ID {}>'.format(self.id)

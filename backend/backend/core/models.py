@@ -148,6 +148,13 @@ class Service(models.Model):
     rate = models.FloatField(
         default=0
     )
+    user = models.ForeignKey(
+        CustomUserModel,
+        on_delete=models.CASCADE,
+        related_name='services',
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return self.name

@@ -16,7 +16,7 @@ import axios from "axios";
 
 const useStyles = makeStyles({
   root: {
-    minWidth: 575,
+    width: "500px",
     backgroundColor: "#C0CEFC",
     display: "grid",
     gridTemplateColumns: "50% 50%",
@@ -25,18 +25,6 @@ const useStyles = makeStyles({
   },
   title: {
     fontSize: 14,
-  },
-  name: {
-    color: "#2C4081",
-    fontWeight: "bold",
-    fontSize: "36px",
-    fontFamily: "Pridi"
-  },
-  description: {
-    color: "#2C4081",
-    fontWeight: "bold",
-    fontSize: "28px",
-    fontFamily: "Red Hat Text"
   },
   type: {
     color: "#2C4081",
@@ -63,7 +51,6 @@ const useStyles = makeStyles({
   rating: {
     display: "grid",
     gridTemplateColumns: "30% 70%",
-    marginTop: "50px",
   },
   rate: {
     color: "#2C4081",
@@ -73,8 +60,8 @@ const useStyles = makeStyles({
   },
   column: {
     display: "grid",
-    gridTemplateRows: "50% 20% 20%",
-    rowGap: "5px",
+    gridTemplateRows: "30% 30% 20%",
+    rowGap: "10px",
   },
   tags: {
 
@@ -89,53 +76,19 @@ const useStyles = makeStyles({
 });
 
 
-export default function Service_list(props) {
+export default function Service_list_user(props) {
   const classes = useStyles();
 
   const history = useHistory()
   const dispatch = useDispatch();
   const user = useSelector(({authReducer}) => authReducer.user)
   const token = useSelector(({authReducer}) => authReducer.token)
-  const [form, setForm] = useState({
-    first_name: {
-      value: 'first_name',
-    },
-    last_name: {
-      value: 'last_name',
-    },
-    email: {
-      value: 'email',
-    },
-  });
-
-  const changFormField = (event) => {
-    const {name, value} = event.target;
-    setForm({
-      ...form,
-      [name]: { ...form[name], value }
-    });
-  };
 
   const get_detail = (id, path) => {
     console.log("get_detail" + id);
      return dispatch(get_service(token, id, history, path));
   }
 
-  const delete_obj = (id) => {
-    let requestBody = {};
-    requestBody.method = 'DELETE';
-
-    const request = axios.delete(`http://0.0.0.0:8080/api/service/`+ id+ "/", {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-
-        request.then((response) => {
-          props.callback();
-        })
-        .catch(error => {
-            console.log(error);
-        });
-  }
   let tags_arr = "" ;
   try {
         tags_arr = props.tags.map((tag) => (
@@ -145,65 +98,40 @@ export default function Service_list(props) {
         console.log(e);
     }
 
-    let buttons = ""
-    switch (props.status){
-      case "Example":
-        buttons = (
-            <div className={classes.column}>
-        <div className={classes.tags}>
-          {tags_arr}
-        </div>
-        <Button className={classes.button} size="small" onClick={(() => {delete_obj(props.id)})}>Delete</Button>
-        <Button className={classes.button} size="small" onClick={(() => {get_detail(props.id, "Example")})}>Learn More</Button>
-      </div>
-        )
-        break;
-      case "Processed":
-        buttons = (
-            <div className={classes.column}>
-        <div className={classes.tags}>
-          {tags_arr}
-        </div>
-              <div></div>
-        <Button className={classes.button} size="small" onClick={(() => {get_detail(props.id, "Requested")})}>Process</Button>
-      </div>
-        )
-        break;
-      case "Done":
-        buttons = (
-            <div className={classes.column}>
-        <div className={classes.tags}>
-          {tags_arr}
-        </div>
-              <div></div>
-        <Button className={classes.button} size="small" onClick={(() => {get_detail(props.id, "Done")})}>More</Button>
-      </div>
-        )
-        break;
-    }
 
   return (
    <Card className={classes.root} variant="outlined">
       <div>
         <CardContent>
-          <Typography className={classes.name}>
+          <Typography className={classes.type}>
             {props.name}
           </Typography>
-          <Typography className={classes.description}>
+          <Typography className={classes.type}>
             {props.description}
           </Typography>
           <Typography className={classes.type}>
             {props.type}
           </Typography>
-          <div className={classes.rating}>
+             <Typography className={classes.type}>
+            {props.company}
+          </Typography>
+             <Typography className={classes.type}>
+            {props.status}
+          </Typography>
+        </CardContent>
+      </div>
+     <div className={classes.column}>
+        <div className={classes.tags}>
+          {tags_arr}
+        </div>
+       <div className={classes.rating}>
               <img className={classes.image} src = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Gold_Star.svg/1200px-Gold_Star.svg.png"/>
           <Typography className={classes.rate}>
             {props.rate}
           </Typography>
         </div>
-        </CardContent>
+        <Button className={classes.button} size="small" onClick={(() => {get_detail(props.id, props.status)})}>Learn More</Button>
       </div>
-     {buttons}
     </Card>
   );
 }

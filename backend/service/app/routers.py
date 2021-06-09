@@ -9,28 +9,25 @@ from PIL import Image
 import numpy
 import cv2
 
-from app_code.app.recognition import recognition_dlib, recognition_haar, recognition_face_recognition, \
+from .recognition import recognition_dlib, recognition_haar, recognition_face_recognition, \
     recognition_mtcnn
-from app_code.app.add_description import create
+from .add_description import create
 
-from app_code.app import app
-from app_code.app import socketio
-from app_code.app.models import User
-
+from . import app
+from . import socketio
+from .models import User
 
 
 @app.route('/delete', methods=['GET'])
-@cross_origin()
 def delete():
     users = User.query.all()
     for user in users:
-        user.delete()
+        user.delete(user)
     print(User.query.all())
     return render_template('default.html')
 
 
 @app.route('/add', methods=['GET', 'POST'])
-@cross_origin()
 def add():
     if request.method == "GET":
         print(User.query.all())
@@ -48,7 +45,6 @@ def add():
 
 
 @app.route('/', methods=['POST', 'GET'])
-@cross_origin()
 def index():
     print("index")
     return render_template('index.html')
@@ -85,5 +81,4 @@ def image(data_image):
     stringData = b64_src + stringData
 
     # emit the frame back
-    print(stringData, res_str)
     emit('response_back', (stringData, res_str))

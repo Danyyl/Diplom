@@ -18,10 +18,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function Profile() {
+export default function Service() {
   const classes = useStyles();
 
   const dispatch = useDispatch();
+  const temp_service = useSelector(({authReducer}) => authReducer.temp_service)
   const user = useSelector(({authReducer}) => authReducer.user)
   const [form, setForm] = useState({
     first_name: {
@@ -43,14 +44,6 @@ export default function Profile() {
     });
   };
 
-  const submitLogin = () => {
-    console.log(123);
-    let params = {
-      email: form.email.value,
-      password: form.password.value,
-    };
-     return dispatch(login(params));
-  }
 
   return (
     <Container component="main" maxWidth="xs">

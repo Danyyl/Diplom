@@ -41,6 +41,30 @@ const authReducer = function (state = initialState, action) {
                 company: action.payload
             }
         }
+        case Actions.SET_TEMP_USER:{
+            return {
+                ...state,
+                temp_user: action.payload
+            }
+        }
+        case Actions.SET_SERVICE:{
+            return {
+                ...state,
+                service: action.payload
+            }
+        }
+        case Actions.SET_ALL_SERVICES:{
+            return {
+                ...state,
+                services: action.payload
+            }
+        }
+        case Actions.SET_ALL_COMPANIES:{
+            return {
+                ...state,
+                companies: action.payload
+            }
+        }
         default: {
             return state;
         }

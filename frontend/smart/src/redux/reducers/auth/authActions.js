@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {LOGIN, SET_TOKEN, SET_USER, SET_COMPANY, SET_USERS} from "./authConstants";
+import {LOGIN, SET_TOKEN, SET_USER, SET_COMPANY, SET_USERS, SET_TEMP_USER, SET_SERVICE, SET_ALL_COMPANIES, SET_ALL_SERVICES} from "./authConstants";
 import store from "../index.js"
 
 
@@ -17,9 +17,8 @@ export function login(params, history){
             console.log("Login");
             localStorage.token = response.data.token;
             dispatch(setToken(response.data.token));
-            dispatch(takeUser(response.data.token));
+            dispatch(takeUser(response.data.token, history));
             dispatch(takeUsers(response.data.token))
-            history.push("/")
 
         })
         .catch(error => {
@@ -38,7 +37,7 @@ export const setToken = (token) => (dispatch) => {
 
 
 
-export function takeUser(token){
+export function takeUser(token, history=" "){
     const request = axios.get(
                     URL_PATH + '/profile/',
                     {
@@ -49,10 +48,67 @@ export function takeUser(token){
         request.then((response) => {
             console.log("TakeUser");
             dispatch(setUser(response.data))
+            console.log(response.data)
+            if (history != " " && response.data[0].role == "Business") {
+                history.push("/")
+            }
+            else if(history != " " && response.data[0].role == "Simple") {
+                dispatch(get_all_services(token))
+                dispatch(get_all_companies(token))
+                history.push("/profile_simple")
+            }
         })
         .catch(error => {
             console.log(error);
         });
+}
+
+export function get_all_services(token){
+    const request = axios.get(
+                    URL_PATH + '/service/?all=true',
+                    {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }
+                );
+    return (dispatch) =>
+        request.then((response) => {
+            dispatch(setAllServices(response.data))
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+export const setAllServices = (data) => (dispatch) => {
+    console.log("Set All Services");
+    dispatch({
+        type: SET_ALL_SERVICES,
+        payload: data
+    })
+}
+
+export function get_all_companies(token){
+    const request = axios.get(
+                    URL_PATH + '/company/',
+                    {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }
+                );
+    return (dispatch) =>
+        request.then((response) => {
+            dispatch(setAllCompanies(response.data))
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
+export const setAllCompanies = (data) => (dispatch) => {
+    console.log("Set All Companies");
+    dispatch({
+        type: SET_ALL_COMPANIES,
+        payload: data
+    })
 }
 
 
@@ -110,6 +166,42 @@ export function get_company(token, id, history){
         });
 }
 
+export function get_service(token, id, history, path){
+    const request = axios.get(
+                    URL_PATH + '/service/' + id + "/",
+                    {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }
+                );
+    return (dispatch) =>
+        request.then((response) => {
+            dispatch(setService(response.data))
+            switch (path){
+                case "Example":
+                    history.push("/service_example");
+                    break;
+                case "Requested":
+                    history.push("/service_requested");
+                    break;
+                case "Processed":
+                    history.push("/service_requested");
+                    break;
+                case "Done":
+                    history.push("/service_done");
+                    break;
+                case "UseB":
+                    history.push("/service_useb");
+                    break;
+                case "Simple":
+                    history.push("/service_simple");
+                    break;
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+
 
 export const setCompany = (company) => (dispatch) => {
     console.log("SetCompany")
@@ -119,6 +211,45 @@ export const setCompany = (company) => (dispatch) => {
     })
 }
 
+export const setService = (service) => (dispatch) => {
+    console.log("SetService")
+    dispatch({
+        type: SET_SERVICE,
+        payload: service
+    })
+}
+
 export function get_detail_user(token, id, history){
     console.log("Get deatail user info = " + id)
 }
+
+export const set_user_page = (user) => (dispatch) => {
+    console.log("SetTempUser")
+    dispatch({
+        type: SET_TEMP_USER,
+        payload: user
+    })
+}
+
+export function get_user_page(token, user, history){
+    let res_user = null;
+     const request = axios.get(
+                    "http://0.0.0.0:8080/api/users/" + user.id + "/",
+                    {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }
+                );
+    return (dispatch) => {
+        request.then((response) => {
+            user = response.data
+            console.log(res_user)
+            dispatch(set_user_page(user))
+            history.push("/temp_user")
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
+    }
+}
+

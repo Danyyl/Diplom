@@ -11,7 +11,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import axios from "axios";
+import axios from 'axios';
 
 
 const useStyles = makeStyles({
@@ -22,6 +22,7 @@ const useStyles = makeStyles({
     gridTemplateColumns: "50% 50%",
     columnGap: "20px",
     boxShadow: "0 0 10px",
+    marginTop: "20px",
   },
   title: {
     fontSize: 14,
@@ -58,7 +59,8 @@ const useStyles = makeStyles({
     fontSize: "15px",
     fontFamily: "Red Hat Text",
     marginRight: "50px",
-    marginTop: "5%",
+    marginTop: "10%",
+    height: "100%"
   },
   rating: {
     display: "grid",
@@ -73,7 +75,7 @@ const useStyles = makeStyles({
   },
   column: {
     display: "grid",
-    gridTemplateRows: "50% 20% 20%",
+    gridTemplateRows: "50% 50%",
     rowGap: "5px",
   },
   tags: {
@@ -86,10 +88,16 @@ const useStyles = makeStyles({
     fontFamily: "Red Hat Text",
     marginLeft: "50px",
   },
+  button_block: {
+    display: "grid",
+    gridTemplateRows: "20% 20%",
+    rowGap: "20px",
+    marginBottom: "30px"
+  }
 });
 
 
-export default function Service_list(props) {
+export default function InputList(props) {
   const classes = useStyles();
 
   const history = useHistory()
@@ -97,14 +105,14 @@ export default function Service_list(props) {
   const user = useSelector(({authReducer}) => authReducer.user)
   const token = useSelector(({authReducer}) => authReducer.token)
   const [form, setForm] = useState({
-    first_name: {
-      value: 'first_name',
+    name: {
+      value: props.name,
     },
-    last_name: {
-      value: 'last_name',
+    data: {
+      value: props.data,
     },
-    email: {
-      value: 'email',
+    info: {
+      value: props.info,
     },
   });
 
@@ -121,11 +129,34 @@ export default function Service_list(props) {
      return dispatch(get_service(token, id, history, path));
   }
 
+  const save_obj = (id) => {
+    let requestBody = {};
+    requestBody.method = 'POST';
+    requestBody = {
+        name: form.name.value,
+        data: form.data.value,
+        info: form.info.value,
+        type: props.status,
+        form: props.form
+    };
+
+    const request = axios.put(`http://0.0.0.0:8080/api/input_data/`+ id + "/", requestBody, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+
+        request.then((response) => {
+          props.callback_(response.data)
+        })
+        .catch(error => {
+            console.log(error);
+        });
+  }
+
   const delete_obj = (id) => {
     let requestBody = {};
     requestBody.method = 'DELETE';
 
-    const request = axios.delete(`http://0.0.0.0:8080/api/service/`+ id+ "/", {
+    const request = axios.delete(`http://0.0.0.0:8080/api/input_data/`+ id+ "/", {
                         headers: { Authorization: `Bearer ${token}` }
                     });
 
@@ -136,72 +167,50 @@ export default function Service_list(props) {
             console.log(error);
         });
   }
-  let tags_arr = "" ;
-  try {
-        tags_arr = props.tags.map((tag) => (
-            <Typography className={classes.tag}>{"#" + tag.name}</Typography>
-        ));
-    } catch (e){
-        console.log(e);
-    }
 
+    let cards = ""
     let buttons = ""
     switch (props.status){
       case "Example":
-        buttons = (
-            <div className={classes.column}>
-        <div className={classes.tags}>
-          {tags_arr}
-        </div>
-        <Button className={classes.button} size="small" onClick={(() => {delete_obj(props.id)})}>Delete</Button>
-        <Button className={classes.button} size="small" onClick={(() => {get_detail(props.id, "Example")})}>Learn More</Button>
-      </div>
+        cards = (
+            <CardContent>
+          <TextField id="standard-basic" label="Name" value={form.name.value||''} name="name" onChange={changFormField}/>
+          <TextField multiline id="standard-basic" label="Data" value={form.data.value||''} name="data" onChange={changFormField}/>
+          <TextField multiline id="standard-basic" label="Info" value={form.info.value||''} name="info" onChange={changFormField}/>
+        </CardContent>
+        )
+        buttons = (<div className={classes.button_block}>
+            <Button className={classes.button} size="small" onClick={(() => {delete_obj(props.id)})}>Delete</Button>
+        <Button className={classes.button} size="small" onClick={(() => {save_obj(props.id)})}>Save</Button>
+          </div>
         )
         break;
       case "Processed":
-        buttons = (
-            <div className={classes.column}>
-        <div className={classes.tags}>
-          {tags_arr}
-        </div>
-              <div></div>
-        <Button className={classes.button} size="small" onClick={(() => {get_detail(props.id, "Requested")})}>Process</Button>
-      </div>
+        cards = (
+            <CardContent>
+          <TextField disabled id="standard-basic" label="Name" value={form.name.value||''} name="name" onChange={changFormField}/>
+          <TextField multiline id="standard-basic" label="Data" value={form.data.value||''} name="data" onChange={changFormField} disabled />
+          <TextField multiline id="standard-basic" label="Info" value={form.info.value||''} name="info" onChange={changFormField} disabled />
+        </CardContent>
         )
+        buttons = ""
         break;
       case "Done":
-        buttons = (
-            <div className={classes.column}>
-        <div className={classes.tags}>
-          {tags_arr}
-        </div>
-              <div></div>
-        <Button className={classes.button} size="small" onClick={(() => {get_detail(props.id, "Done")})}>More</Button>
-      </div>
+        cards = (
+            <CardContent>
+          <TextField id="standard-basic" label="Name" value={form.name.value||''} name="name" onChange={changFormField} disabled />
+          <TextField multiline id="standard-basic" label="Data" value={form.data.value||''} name="data" onChange={changFormField} disabled />
+          <TextField multiline id="standard-basic" label="Info" value={form.info.value||''} name="info" onChange={changFormField} disabled />
+        </CardContent>
         )
+        buttons = ""
         break;
     }
 
   return (
    <Card className={classes.root} variant="outlined">
       <div>
-        <CardContent>
-          <Typography className={classes.name}>
-            {props.name}
-          </Typography>
-          <Typography className={classes.description}>
-            {props.description}
-          </Typography>
-          <Typography className={classes.type}>
-            {props.type}
-          </Typography>
-          <div className={classes.rating}>
-              <img className={classes.image} src = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Gold_Star.svg/1200px-Gold_Star.svg.png"/>
-          <Typography className={classes.rate}>
-            {props.rate}
-          </Typography>
-        </div>
-        </CardContent>
+        {cards}
       </div>
      {buttons}
     </Card>

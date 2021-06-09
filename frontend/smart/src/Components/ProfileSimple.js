@@ -5,7 +5,7 @@ import Container from '@material-ui/core/Container';
 import { useDispatch, useSelector } from 'react-redux';
 import {get_company, login, takeUser} from '../redux/reducers/auth/authActions'
 import Typography from "@material-ui/core/Typography";
-import Header from "./Header";
+import HeaderSimple from "./HeaderSimple";
 import axios from "axios";
 
 
@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function Profile() {
+export default function ProfileSimple() {
   const classes = useStyles();
 
   const dispatch = useDispatch();
@@ -117,7 +117,7 @@ export default function Profile() {
 
   return (
     <Container component="main" maxWidth="xs">
-            <Header></Header>
+            <HeaderSimple></HeaderSimple>
       <div className={classes.paper}>
           <div className={classes.field}>
           <TextField InputProps={{classes:{input: classes.text_f},}} className={classes.input} label="First name" value={form.first_name.value} name="first_name" onChange={changFormField}/>
